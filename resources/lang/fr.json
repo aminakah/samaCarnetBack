@@ -1,0 +1,127 @@
+{
+  "auth": {
+    "login_success": "Connexion réussie",
+    "login_failed": "Échec de la connexion",
+    "invalid_credentials": "Identifiants invalides",
+    "logout_success": "Déconnexion réussie",
+    "registration_success": "Inscription réussie",
+    "password_changed": "Mot de passe modifié avec succès",
+    "token_expired": "Token expiré",
+    "unauthorized": "Non autorisé"
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "email": "Adresse email invalide",
+    "min_length": "Minimum {{min}} caractères requis",
+    "max_length": "Maximum {{max}} caractères autorisés",
+    "numeric": "Doit être un nombre",
+    "positive": "Doit être un nombre positif",
+    "date": "Date invalide"
+  },
+  "pregnancy": {
+    "created": "Grossesse créée avec succès",
+    "updated": "Grossesse mise à jour",
+    "deleted": "Grossesse supprimée",
+    "not_found": "Grossesse non trouvée",
+    "already_active": "Patient a déjà une grossesse active",
+    "completed": "Grossesse terminée avec succès",
+    "first_pregnancy": "Première grossesse",
+    "high_risk": "Grossesse à haut risque",
+    "normal_risk": "Grossesse à risque normal"
+  },
+  "consultation": {
+    "created": "Consultation créée avec succès",
+    "updated": "Consultation mise à jour",
+    "started": "Consultation commencée",
+    "completed": "Consultation terminée",
+    "cancelled": "Consultation annulée",
+    "not_found": "Consultation non trouvée",
+    "scheduled": "Programmée",
+    "in_progress": "En cours",
+    "follow_up_needed": "Suivi nécessaire"
+  },
+  "vaccination": {
+    "recorded": "Vaccination enregistrée avec succès",
+    "updated": "Vaccination mise à jour",
+    "certificate_issued": "Certificat émis avec succès",
+    "schedule_generated": "Calendrier généré avec succès",
+    "adverse_event_recorded": "Effet indésirable enregistré",
+    "series_completed": "Série de vaccinations complète",
+    "overdue": "En retard",
+    "due_soon": "Bientôt due",
+    "mandatory": "Obligatoire",
+    "optional": "Optionnel"
+  },
+  "sync": {
+    "pull_success": "Synchronisation descendante réussie",
+    "push_success": "Synchronisation montante réussie",
+    "conflict_detected": "Conflit détecté",
+    "conflict_resolved": "Conflit résolu",
+    "sync_failed": "Échec de synchronisation",
+    "no_changes": "Aucun changement à synchroniser",
+    "reset_success": "État de synchronisation réinitialisé"
+  },
+  "tenant": {
+    "created": "Organisation créée avec succès",
+    "subscription_expired": "Abonnement expiré",
+    "inactive": "Organisation inactive",
+    "not_found": "Organisation non trouvée"
+  },
+  "user": {
+    "profile_updated": "Profil mis à jour",
+    "not_found": "Utilisateur non trouvé",
+    "access_denied": "Accès refusé",
+    "role_admin": "Administrateur",
+    "role_doctor": "Docteur",
+    "role_midwife": "Sage-femme",
+    "role_patient": "Patient"
+  },
+  "medical": {
+    "blood_pressure": "Tension artérielle",
+    "weight": "Poids",
+    "height": "Taille",
+    "temperature": "Température",
+    "heart_rate": "Fréquence cardiaque",
+    "fundal_height": "Hauteur utérine",
+    "fetal_heart_rate": "Rythme cardiaque fœtal",
+    "gestational_age": "Âge gestationnel",
+    "due_date": "Date prévue d'accouchement",
+    "trimester_1": "Premier trimestre",
+    "trimester_2": "Deuxième trimestre",
+    "trimester_3": "Troisième trimestre"
+  },
+  "common": {
+    "success": "Succès",
+    "error": "Erreur",
+    "warning": "Attention",
+    "info": "Information",
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "view": "Voir",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "yes": "Oui",
+    "no": "Non",
+    "date": "Date",
+    "time": "Heure",
+    "name": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "status": "Statut",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "pending": "En attente"
+  },
+  "errors": {
+    "server_error": "Erreur serveur interne",
+    "not_found": "Ressource non trouvée",
+    "validation_failed": "Validation échouée",
+    "database_error": "Erreur de base de données",
+    "network_error": "Erreur réseau",
+    "permission_denied": "Permission refusée"
+  }
+}

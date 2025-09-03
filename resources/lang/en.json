@@ -1,0 +1,127 @@
+{
+  "auth": {
+    "login_success": "Login successful",
+    "login_failed": "Login failed",
+    "invalid_credentials": "Invalid credentials",
+    "logout_success": "Logout successful",
+    "registration_success": "Registration successful",
+    "password_changed": "Password changed successfully",
+    "token_expired": "Token expired",
+    "unauthorized": "Unauthorized"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email address",
+    "min_length": "Minimum {{min}} characters required",
+    "max_length": "Maximum {{max}} characters allowed",
+    "numeric": "Must be a number",
+    "positive": "Must be a positive number",
+    "date": "Invalid date"
+  },
+  "pregnancy": {
+    "created": "Pregnancy created successfully",
+    "updated": "Pregnancy updated",
+    "deleted": "Pregnancy deleted",
+    "not_found": "Pregnancy not found",
+    "already_active": "Patient already has an active pregnancy",
+    "completed": "Pregnancy completed successfully",
+    "first_pregnancy": "First pregnancy",
+    "high_risk": "High risk pregnancy",
+    "normal_risk": "Normal risk pregnancy"
+  },
+  "consultation": {
+    "created": "Consultation created successfully",
+    "updated": "Consultation updated",
+    "started": "Consultation started",
+    "completed": "Consultation completed",
+    "cancelled": "Consultation cancelled",
+    "not_found": "Consultation not found",
+    "scheduled": "Scheduled",
+    "in_progress": "In progress",
+    "follow_up_needed": "Follow-up needed"
+  },
+  "vaccination": {
+    "recorded": "Vaccination recorded successfully",
+    "updated": "Vaccination updated",
+    "certificate_issued": "Certificate issued successfully",
+    "schedule_generated": "Schedule generated successfully",
+    "adverse_event_recorded": "Adverse event recorded",
+    "series_completed": "Vaccination series completed",
+    "overdue": "Overdue",
+    "due_soon": "Due soon",
+    "mandatory": "Mandatory",
+    "optional": "Optional"
+  },
+  "sync": {
+    "pull_success": "Pull synchronization successful",
+    "push_success": "Push synchronization successful",
+    "conflict_detected": "Conflict detected",
+    "conflict_resolved": "Conflict resolved",
+    "sync_failed": "Synchronization failed",
+    "no_changes": "No changes to synchronize",
+    "reset_success": "Synchronization state reset"
+  },
+  "tenant": {
+    "created": "Organization created successfully",
+    "subscription_expired": "Subscription expired",
+    "inactive": "Organization inactive",
+    "not_found": "Organization not found"
+  },
+  "user": {
+    "profile_updated": "Profile updated",
+    "not_found": "User not found",
+    "access_denied": "Access denied",
+    "role_admin": "Administrator",
+    "role_doctor": "Doctor",
+    "role_midwife": "Midwife",
+    "role_patient": "Patient"
+  },
+  "medical": {
+    "blood_pressure": "Blood pressure",
+    "weight": "Weight",
+    "height": "Height",
+    "temperature": "Temperature",
+    "heart_rate": "Heart rate",
+    "fundal_height": "Fundal height",
+    "fetal_heart_rate": "Fetal heart rate",
+    "gestational_age": "Gestational age",
+    "due_date": "Due date",
+    "trimester_1": "First trimester",
+    "trimester_2": "Second trimester",
+    "trimester_3": "Third trimester"
+  },
+  "common": {
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Information",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "create": "Create",
+    "update": "Update",
+    "yes": "Yes",
+    "no": "No",
+    "date": "Date",
+    "time": "Time",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending"
+  },
+  "errors": {
+    "server_error": "Internal server error",
+    "not_found": "Resource not found",
+    "validation_failed": "Validation failed",
+    "database_error": "Database error",
+    "network_error": "Network error",
+    "permission_denied": "Permission denied"
+  }
+}

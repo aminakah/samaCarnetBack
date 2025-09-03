@@ -1,0 +1,127 @@
+{
+  "auth": {
+    "login_success": "Dugg ci biir gi",
+    "login_failed": "Dugg gi amul",
+    "invalid_credentials": "Tuuru yi baaxul",
+    "logout_success": "Génn ci biir gi",
+    "registration_success": "Bind gi nekk na",
+    "password_changed": "Kodu mbind mi soppi na",
+    "token_expired": "Token bi jeex na",
+    "unauthorized": "Amul jamonoy"
+  },
+  "validation": {
+    "required": "Bii war na am",
+    "email": "Email bu baax",
+    "min_length": "War na am {{min}} mbind yi gëna",
+    "max_length": "Man na {{max}} mbind yi rekk",
+    "numeric": "War na nekk limu",
+    "positive": "War na nekk limu bu baax",
+    "date": "Bés bu baax"
+  },
+  "pregnancy": {
+    "created": "Jigéen bi feebar, soxla na",
+    "updated": "Soppiku na",
+    "deleted": "Fàtt na",
+    "not_found": "Gisul",
+    "already_active": "Jigéen bii am na jigéen bu feebar",
+    "completed": "Jigéen bi jeex na",
+    "first_pregnancy": "Ñu jigéen",
+    "high_risk": "Jigéen bu amul yàqu",
+    "normal_risk": "Jigéen bu baax"
+  },
+  "consultation": {
+    "created": "Wone gi soxla na",
+    "updated": "Soppiku na",
+    "started": "Tàmbaali na",
+    "completed": "Jeex na",
+    "cancelled": "Woyof na",
+    "not_found": "Gisul",
+    "scheduled": "Takk na",
+    "in_progress": "Ci wàllu",
+    "follow_up_needed": "Sàkku war na"
+  },
+  "vaccination": {
+    "recorded": "Dufa bi bind na",
+    "updated": "Soppiku na",
+    "certificate_issued": "Téere gi dellu na",
+    "schedule_generated": "Listé gi soxla na",
+    "adverse_event_recorded": "Yàqu yi bind na",
+    "series_completed": "Dufa yi jeex na",
+    "overdue": "Diir",
+    "due_soon": "Yaakaar na",
+    "mandatory": "War",
+    "optional": "Bëgg nga"
+  },
+  "sync": {
+    "pull_success": "Yeex gi baax na",
+    "push_success": "Yóbbu gi baax na",
+    "conflict_detected": "Xeex gis na",
+    "conflict_resolved": "Xeex bi sàmm na",
+    "sync_failed": "Yeex gi amul",
+    "no_changes": "Amul li soppiku",
+    "reset_success": "Soppiku na ngir tàmbaali"
+  },
+  "tenant": {
+    "created": "Boole bi soxla na",
+    "subscription_expired": "Jëfandikoo bi jeex na",
+    "inactive": "Boole bi liggéey ul",
+    "not_found": "Boole bi gisul"
+  },
+  "user": {
+    "profile_updated": "Sa yoon soppiku na",
+    "not_found": "Jëfandikukat ji gisul",
+    "access_denied": "Dugg amul",
+    "role_admin": "Boroom",
+    "role_doctor": "Doktoor",
+    "role_midwife": "Jigéenugër",
+    "role_patient": "Feebar"
+  },
+  "medical": {
+    "blood_pressure": "Dereet yaram",
+    "weight": "Tilim",
+    "height": "Gaynaax",
+    "temperature": "Tang",
+    "heart_rate": "Xol bi gëna",
+    "fundal_height": "Biir jigéen",
+    "fetal_heart_rate": "Xol doom bi",
+    "gestational_age": "Jigéen bi yoon na",
+    "due_date": "Bés ju yaakaar",
+    "trimester_1": "Ñetti weer ñu ñaar",
+    "trimester_2": "Ñetti weer ñu ñaar",
+    "trimester_3": "Ñetti weer ñu ñett"
+  },
+  "common": {
+    "success": "Baax",
+    "error": "Xeex",
+    "warning": "Yéeg",
+    "info": "Xalaat",
+    "loading": "Yéex...",
+    "save": "Maax",
+    "cancel": "Woyof",
+    "delete": "Fàtt",
+    "edit": "Soppiku",
+    "view": "Xool",
+    "create": "Soxla",
+    "update": "Soppi",
+    "yes": "Waaw",
+    "no": "Déedéet",
+    "date": "Bés",
+    "time": "Waxtu",
+    "name": "Tur",
+    "email": "Email",
+    "phone": "Telefon",
+    "address": "Kaw",
+    "status": "Takk",
+    "active": "Liggéey",
+    "inactive": "Liggéey ul",
+    "pending": "Tëgg"
+  },
+  "errors": {
+    "server_error": "Xeex ci serveur bi",
+    "not_found": "Gisul",
+    "validation_failed": "Kontróol bi amul",
+    "database_error": "Xeex ci base de données bi",
+    "network_error": "Xeex ci réseau bi",
+    "permission_denied": "Dugg amul"
+  }
+}
