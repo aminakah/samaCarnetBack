@@ -1,93 +1,53 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
-import db from '@adonisjs/lucid/services/db'
+import User from '#models/user'
+import Permission from '#models/permission'
+import UserPermission from '#models/user_permission'
+import { DateTime } from 'luxon'
 
 export default class extends BaseSeeder {
   async run() {
-    console.log('  🔑 Seeding user permissions...')
+    console.log('  🔑 Seeding special user permissions...')
     
-    // Récupérer quelques utilisateurs spéciaux et permissions
-    const users = await db.from('users').select('*').where('role', 'admin')
-    const permissions = await db.from('permissions').select('*')
+    // Get admin users with their roles
+    const adminUsers = await User.query()
+      .whereHas('userRoles', (query) => {
+        query.whereHas('role', (roleQuery) => {
+          roleQuery.where('name', 'tenant_admin')
+        })
+      })
+      .limit(2)
     
-    console.log(`Found ${users.length} admin users, ${permissions.length} permissions`)
+    if (adminUsers.length === 0) {
+      console.log('ℹ️  No admin users found, skipping special permissions')
+      return
+    }
 
-    // Créer quelques permissions directes pour les administrateurs principaux
-    const userPermissionsToCreate = []
+    // Special permissions for super admins
+    const specialPermissions = [
+      'admin.system_config',
+      'reports.export'
+    ]
+
+    let createdCount = 0
     
-    // Donner des permissions spéciales aux admins principaux
-    for (const user of users.slice(0, 2)) { // Premiers 2 admins
-      
-      // Permissions spéciales pour certains admins
-      const specialPermissions = [
-        'system.manage_roles',
-        'reports.export_identified',
-        'patients.delete'
-      ]
-      
+    for (const user of adminUsers) {
       for (const permName of specialPermissions) {
-        const permission = permissions.find(p => p.name === permName)
+        const permission = await Permission.findBy('name', permName)
         if (permission) {
-          userPermissionsToCreate.push({
-            user_id: user.id,
-            permission_id: permission.id,
-            tenant_id: user.tenant_id,
-            granted_by: 1, // Système
-            granted_at: new Date(),
-            grant_reason: 'Special admin privileges',
-            is_active: true,
-            created_at: new Date(),
-            updated_at: new Date()
+          await UserPermission.create({
+            userId: user.id,
+            permissionId: permission.id,
+            tenantId: user.tenantId,
+            grantedBy: 1,
+            grantedAt: DateTime.now(),
+            grantReason: 'Special admin privileges',
+            isActive: true
           })
+          createdCount++
         }
       }
-    }
-
-    // Ajouter quelques permissions temporaires pour des utilisateurs spécifiques
-    const doctorUsers = await db.from('users').select('*').where('role', 'doctor').limit(1)
-    
-    if (doctorUsers.length > 0) {
-      const emergencyPermissions = ['emergency.override_restrictions']
-      
-      for (const permName of emergencyPermissions) {
-        const permission = permissions.find(p => p.name === permName)
-        if (permission) {
-          userPermissionsToCreate.push({
-            user_id: doctorUsers[0].id,
-            permission_id: permission.id,
-            tenant_id: doctorUsers[0].tenant_id,
-            granted_by: 1,
-            granted_at: new Date(),
-            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 jours
-            grant_reason: 'Temporary emergency override for special cases',
-            is_active: true,
-            created_at: new Date(),
-            updated_at: new Date()
-          })
-        }
-      }
-    }
-
-    if (userPermissionsToCreate.length > 0) {
-      await db.table('user_permissions').insert(userPermissionsToCreate)
-      console.log(`✅ Created ${userPermissionsToCreate.length} direct user permissions`)
-      
-      // Afficher un résumé
-      const permissionSummary = userPermissionsToCreate.reduce((acc, up) => {
-        const permission = permissions.find(p => p.id === up.permission_id)
-        if (permission) {
-          acc[permission.display_name] = (acc[permission.display_name] || 0) + 1
-        }
-        return acc
-      }, {} as Record<string, number>)
-      
-      console.log('📊 Direct permissions summary:')
-      for (const [permName, count] of Object.entries(permissionSummary)) {
-        console.log(`   - ${permName}: ${count} users`)
-      }
-    } else {
-      console.log('ℹ️  No direct user permissions created (using role-based permissions)')
     }
     
-    console.log('✅ User permissions seeded successfully')
+    console.log(`✅ Created ${createdCount} special user permissions`)
   }
 }

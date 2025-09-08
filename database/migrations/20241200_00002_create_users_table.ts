@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       table.increments('id').primary()
       
       // Tenant relationship
-      table.integer('tenant_id').unsigned().notNullable()
+      table.integer('tenant_id').unsigned().nullable
       table.foreign('tenant_id').references('id').inTable('tenants').onDelete('CASCADE')
       
       // Basic user information
@@ -20,14 +20,11 @@ export default class extends BaseSchema {
       table.date('date_of_birth').nullable()
       table.enum('gender', ['male', 'female', 'other']).nullable()
       
-      // Authentication
       table.string('password').notNullable()
       table.timestamp('email_verified_at', { useTz: true }).nullable()
       table.string('remember_me_token').nullable()
       
-      // Role and permissions
-      table.enum('role', ['admin', 'doctor', 'midwife', 'patient']).notNullable()
-      table.json('permissions').nullable()
+    
       
       // Professional information (for medical staff)
       table.string('license_number', 50).nullable()
@@ -66,10 +63,9 @@ export default class extends BaseSchema {
       table.unique(['tenant_id', 'license_number'])
       
       // Indexes for performance
-      table.index(['tenant_id', 'role'])
+      table.index(['tenant_id',])
       table.index(['tenant_id', 'status'])
       table.index(['email'])
-      table.index(['role'])
       table.index(['last_sync_at'])
     })
   }

@@ -94,35 +94,7 @@ export default class MainSeeder extends BaseSeeder {
       console.log(`⏭️  Skipped: ${this.skippedCount}/${totalSeeders}`)
       console.log(`❌ Failed: ${this.errorCount}/${totalSeeders}`)
       
-      console.log('\n📊 Summary:')
-      console.log('  • Multi-tenant system initialized')
-      console.log('  • RBAC system fully configured') 
-      console.log('  • Medical workflows established')
-      console.log('  • Sample data populated')
-      console.log('  • Ready for application use')
-      
-      console.log('\n🌟 System Features Enabled:')
-      console.log('  ▶ Multi-tenant architecture')
-      console.log('  ▶ Role-based access control') 
-      console.log('  ▶ Pregnancy tracking system')
-      console.log('  ▶ Vaccination management')
-      console.log('  ▶ Medical consultations')
-      console.log('  ▶ Personnel hierarchy')
-      
-      console.log('\n🔑 Test Accounts Available:')
-      console.log('  • admin@dakar-health.sn (Super Admin)')
-      console.log('  • mamadou.seck@dakar-health.sn (Gynéco-obstétricien)')
-      console.log('  • fatou.ba@dakar-health.sn (Sage-femme)')
-      console.log('  • admin@demo.sn (Demo Admin)')
-      
-      console.log('\n🏥 Tenants Configured:')
-      console.log('  • Centre de Santé Dakar (dakar-health)')
-      console.log('  • Clinique Almadies (almadies)')
-      console.log('  • Hôpital Régional de Thiès (thies)')
-      console.log('  • Clinique Démo Sénégal (demo)')
-      
       console.log('\n' + '─'.repeat(60))
-      console.log('🎉 Ready to serve patients across Senegal! 🇸🇳')
       console.log('─'.repeat(60))
       
     } catch (error) {

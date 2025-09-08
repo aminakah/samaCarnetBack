@@ -1,6 +1,8 @@
 import User from '#models/user'
 import Tenant from '#models/tenant'
-// import hash from '@adonisjs/core/services/hash' // Unused import
+import Role from '#models/role'
+import UserRole from '#models/user_role'
+import hash from '@adonisjs/core/services/hash'
 import { DateTime } from 'luxon'
 
 /**
@@ -12,35 +14,33 @@ export default class AuthService {
    */
   static async authenticate(
     email: string, 
-    _password: string, 
-    tenantId: number
+    password: string
   ): Promise<{ success: boolean; user?: User; message?: string }> {
     try {
-
       const user = await User.query()
         .where('email', email)
-        .where('tenant_id', tenantId)
-        // .where('status', 'active')
-        // .whereNull('deleted_at')
+        .where('status', 'active')
+        .whereNull('deleted_at')
         .preload('tenant')
+        .preload('userRoles')
+        .preload('userPermissions')
         .first()
-
-        console.log(user)
       
       if (!user) {
         return { success: false, message: 'Invalid credentials' }
       }
-      // const isValidPassword = await hash.verify(user.password, password)
-      // if (!isValidPassword) {
-      //   return { success: false, message: 'Invalid credentials' }
-      // }
+      
+      const isValidPassword = await hash.verify(user.password, password)
+      if (!isValidPassword) {
+        return { success: false, message: 'Invalid credentials' }
+      }
 
-      // Check tenant is active
+      // // Check tenant is active
       // if (!user.tenant.isActive) {
       //   return { success: false, message: 'Tenant subscription expired or inactive' }
       // }
 
-      return { success: true,user  }
+      return { success: true, user }
     } catch (error) {
       console.log(error)
 
@@ -57,7 +57,7 @@ export default class AuthService {
     lastName: string
     email: string
     password: string
-    role?: string
+    roleName?: string
     phone?: string
     dateOfBirth?: DateTime
     gender?: string
@@ -83,7 +83,7 @@ export default class AuthService {
       user.lastName = data.lastName
       user.email = data.email
       user.password = data.password // Will be hashed by the model hook
-      user.role = (data.role as any) || 'patient'
+      // Role will be assigned after user creation
       user.phone = data.phone ?? null
       user.dateOfBirth = data.dateOfBirth ?? null
       user.gender = data.gender as any
@@ -92,6 +92,20 @@ export default class AuthService {
       user.status = 'active'
 
       await user.save()
+
+      // Assign role to user
+      if (data.roleName) {
+        const role = await Role.findBy('name', data.roleName)
+        if (role) {
+          await UserRole.create({
+            userId: user.id,
+            roleId: role.id,
+            tenantId: user.tenantId,
+            assignedAt: DateTime.now(),
+            isActive: true
+          })
+        }
+      }
 
       return { success: true, user }
     } catch (error) {
@@ -141,15 +155,15 @@ export default class AuthService {
   /**
    * Check if user can access patient data
    */
-  static canAccessPatientData(user: User, patientId: number): boolean {
+  static async canAccessPatientData(user: User, patientId: number): Promise<boolean> {
     // Admin can access all
-    if (user.role === 'admin') return true
+    if (await user.isAdmin()) return true
     
     // Medical staff can access assigned patients (simplified for now)
-    if (['doctor', 'midwife'].includes(user.role)) return true
+    if (await user.isMedicalStaff()) return true
     
     // Patients can only access their own data
-    if (user.role === 'patient') return user.id === patientId
+    if (await user.isPatient()) return user.id === patientId
     
     return false
   }
@@ -157,19 +171,15 @@ export default class AuthService {
   /**
    * Check if user has medical staff permissions
    */
-  static isMedicalStaff(user: User): boolean {
-    return ['admin', 'doctor', 'midwife'].includes(user.role)
+  static async isMedicalStaff(user: User): Promise<boolean> {
+    return await user.isMedicalStaff()
   }
 
   /**
    * Get users by role in tenant
    */
-  static async getUsersByRole(tenantId: number, role: string): Promise<User[]> {
-    return await User.query()
-      .where('tenant_id', tenantId)
-      .where('role', role)
-      .where('status', 'active')
-      .whereNull('deleted_at')
+  static async getUsersByRole(tenantId: number, roleName: string): Promise<User[]> {
+    return await User.findByRoleInTenant(tenantId, roleName)
   }
 
   /**
@@ -191,7 +201,7 @@ export default class AuthService {
       lastName: adminData.lastName,
       email: adminData.email,
       password: adminData.password,
-      role: 'admin',
+      roleName: 'admin',
       phone: adminData.phone
     })
   }

@@ -18,15 +18,6 @@ export default class extends BaseSchema {
         .index()
       
       table
-        .integer('tenant_id')
-        .unsigned()
-        .notNullable()
-        .references('id')
-        .inTable('tenants')
-        .onDelete('CASCADE')
-        .index()
-      
-      table
         .integer('permission_id')
         .unsigned()
         .notNullable()
@@ -35,20 +26,15 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .index()
       
-      // Type d'attribution (direct ou délégation)
+      // Contexte tenant
       table
-        .enum('grant_type', ['direct', 'delegation', 'temporary', 'emergency'])
-        .defaultTo('direct')
-        .comment('Type d attribution de permission')
-      
-      // Conditions spécifiques
-      table.json('conditions').nullable().comment('Conditions spécifiques JSON')
-      table.enum('scope_override', ['own', 'department', 'tenant', 'global']).nullable()
-      
-      // Gestion temporelle
-      table.dateTime('granted_at').notNullable().defaultTo(this.now())
-      table.dateTime('expires_at').nullable()
-      table.dateTime('last_used_at').nullable()
+        .integer('tenant_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('tenants')
+        .onDelete('CASCADE')
+        .index()
       
       // Traçabilité
       table
@@ -59,41 +45,24 @@ export default class extends BaseSchema {
         .inTable('users')
         .onDelete('SET NULL')
       
-      table.text('grant_reason').notNullable().comment('Justification obligatoire')
+      table.dateTime('granted_at').notNullable().defaultTo(this.now())
+      table.dateTime('expires_at').nullable()
+      table.text('grant_reason').nullable()
       
-      // Délégation (si applicable)
-      table
-        .integer('delegated_from')
-        .unsigned()
-        .nullable()
-        .references('id')
-        .inTable('users')
-        .onDelete('CASCADE')
-        .comment('Utilisateur qui délègue')
+      // Surcharge de scope
+      table.enum('scope_override', ['own', 'department', 'tenant', 'global']).nullable()
+      table.json('conditions').nullable()
       
-      table.dateTime('delegation_start').nullable()
-      table.dateTime('delegation_end').nullable()
-      
-      // Status et audit
+      // Status
       table.boolean('is_active').notNullable().defaultTo(true)
-      table.boolean('requires_approval').notNullable().defaultTo(false)
-      table.dateTime('approved_at').nullable()
-      table
-        .integer('approved_by')
-        .unsigned()
-        .nullable()
-        .references('id')
-        .inTable('users')
-        .onDelete('SET NULL')
       
       // Timestamps
       table.timestamps(true, true)
       
-      // Contraintes et index
-      table.unique(['user_id', 'tenant_id', 'permission_id'])
+      // Contraintes
+      table.unique(['user_id', 'permission_id', 'tenant_id'])
+      table.index(['tenant_id', 'is_active'])
       table.index(['expires_at'])
-      table.index(['grant_type', 'is_active'])
-      table.index(['delegated_from', 'delegation_end'])
     })
   }
 

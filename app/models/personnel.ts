@@ -209,6 +209,46 @@ export default class Personnel extends BaseModel {
   }
 
   /**
+   * Check if personnel has specific role
+   */
+  async hasRole(roleName: string): Promise<boolean> {
+    await this.load('user')
+    return await this.user.hasRole(roleName, this.tenantId)
+  }
+
+  /**
+   * Check if personnel has specific permission
+   */
+  async hasPermission(permissionName: string): Promise<boolean> {
+    await this.load('user')
+    return await this.user.hasPermission(permissionName, this.tenantId)
+  }
+
+  /**
+   * Get all roles for this personnel
+   */
+  async getRoles(): Promise<any[]> {
+    await this.load('user')
+    return await this.user.getActiveRoles(this.tenantId)
+  }
+
+  /**
+   * Check if personnel is admin
+   */
+  async isAdmin(): Promise<boolean> {
+    await this.load('user')
+    return await this.user.isAdmin()
+  }
+
+  /**
+   * Check if personnel is medical staff
+   */
+  async isMedicalStaff(): Promise<boolean> {
+    await this.load('user')
+    return await this.user.isMedicalStaff()
+  }
+
+  /**
    * Soft delete personnel
    */
   async softDelete(): Promise<void> {

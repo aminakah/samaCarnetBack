@@ -9,11 +9,12 @@ export default class TenantsSeeder extends BaseSeeder {
   
 
     const tenants = [
+     
       {
         name: 'Centre de Santé Dakar',
         subdomain: 'dakar-health',
         domain: null,
-        email: 'admin@dakar-health.sn',
+        email: 'superadmin@samacarnet.sn',
         phone: '+221 33 889 00 00',
         address: 'Plateau, Dakar, Sénégal',
         settings: JSON.stringify({
@@ -77,7 +78,15 @@ export default class TenantsSeeder extends BaseSeeder {
         }),
         status: 'active' as const,
         subscriptionPlan: 'basic' as const
-      }
+      },
+      {
+        name: 'global',
+        subdomain: 'global',
+        domain: null,
+        email: 'superadmin@samacarnet.sn',
+        phone: '+221 33 889 00 00',
+        address: 'Plateau, Dakar, Sénégal',
+      },
     ]
 
     for (const tenantData of tenants) {

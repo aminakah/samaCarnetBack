@@ -19,9 +19,9 @@ export default class AuthController {
     try {
       // Détecter automatiquement le tenant basé sur l'email
       const { tenantId, isSuperAdmin } = this.determineTenantFromEmail(email)
-      console.log('Tenant détecté automatiquement:', { email, tenantId, isSuperAdmin })
+      console.log('Tenant détecté automatiquement:', { email, isSuperAdmin })
 
-      const authResult = await AuthService.authenticate(email, password, tenantId)
+      const authResult = await AuthService.authenticate(email, password)
       if (!authResult.success) {
         return response.unauthorized({
           success: false,
@@ -31,9 +31,10 @@ export default class AuthController {
 
       const user = authResult.user!
 
-      // Mettre à jour le tenant de l'utilisateur si nécessaire
-      if (user.tenantId !== tenantId) {
-        user.tenantId = tenantId
+      // Mettre à jour le tenant de l'utilisateur si nécessaire (seulement pour les tenants numériques)
+      const userTenantId = user.tenantId?.toString()
+      if (userTenantId !== tenantId && tenantId !== 'global' && !isNaN(parseInt(tenantId))) {
+        user.tenantId = parseInt(tenantId)
         await user.save()
       }
 
@@ -130,7 +131,7 @@ export default class AuthController {
         lastName: payload.lastName,
         email: payload.email,
         password: payload.password,
-        role: payload.role || 'patient',
+        roleName: payload.role || 'patient',
         phone: payload.phone,
         dateOfBirth: payload.dateOfBirth ? DateTime.fromISO(payload.dateOfBirth) : undefined
       })
@@ -151,7 +152,6 @@ export default class AuthController {
             id: user.id,
             name: user.fullName,
             email: user.email,
-            role: user.role,
             syncToken: user.syncToken
           }
         }
@@ -190,7 +190,8 @@ export default class AuthController {
         lastName: payload.lastName,
         email: payload.email,
         password: payload.password,
-        role: 'admin'
+        roleName: 'admin',
+        phone: payload.phone
       })
 
       if (!result.success) {
@@ -213,8 +214,7 @@ export default class AuthController {
           user: {
             id: result.user!.id,
             name: result.user!.fullName,
-            email: result.user!.email,
-            role: result.user!.role
+            email: result.user!.email
           }
         }
       })
@@ -249,7 +249,6 @@ export default class AuthController {
             id: user.id,
             name: user.fullName,
             email: user.email,
-            role: user.role,
             phone: user.phone,
             dateOfBirth: user.dateOfBirth?.toISODate(),
             gender: user.gender,
@@ -368,47 +367,4 @@ export default class AuthController {
       })
     }
   }
-
-  /**
-   * Get sync token for offline synchronization
-   */
-  // async getSyncToken({ response, auth }: HttpContext) {
-  //   try {
-  //     return response.ok({
-  //       success: true,
-  //       data: {
-  //         syncToken: auth.user!.syncToken,
-  //         lastSync: auth.user!.lastSyncAt?.toISO(),
-  //         version: auth.user!.version
-  //       }
-  //     })
-  //   } catch (error) {
-  //     return response.internalServerError({
-  //       success: false,
-  //       message: 'Failed to get sync token'
-  //     })
-  //   }
-  // }
-
-  /**
-   * Regenerate sync token
-   */
-  // async regenerateSyncToken({ response, auth }: HttpContext) {
-  //   try {
-  //     const newToken = await AuthService.generateSyncToken(auth.user!)
-      
-  //     return response.ok({
-  //       success: true,
-  //       data: {
-  //         syncToken: newToken,
-  //         message: 'Sync token regenerated successfully'
-  //       }
-  //     })
-  //   } catch (error) {
-  //     return response.internalServerError({
-  //       success: false,
-  //       message: 'Failed to regenerate sync token'
-  //     })
-  //   }
-  // }
 }

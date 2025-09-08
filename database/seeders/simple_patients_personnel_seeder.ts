@@ -1,18 +1,24 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import db from '@adonisjs/lucid/services/db'
+import User from '#models/user'
+import Role from '#models/role'
 
 export default class extends BaseSeeder {
   async run() {
     console.log('  👥 Seeding patients and personnel (simple version)...')
     
-    // Récupérer les utilisateurs et types de personnel
-    const users = await db.from('users').select('*')
+    // Récupérer les utilisateurs avec leurs rôles et types de personnel
+    const users = await User.query().preload('userRoles', (query) => {
+      query.preload('role')
+    })
     const typePersonnels = await db.from('type_personnels').select('*')
     
     console.log(`Found ${users.length} users, ${typePersonnels.length} personnel types`)
 
     // Créer des patients (utilisateurs avec role = 'patient')
-    const patientUsers = users.filter(user => user.role === 'patient')
+    const patientUsers = users.filter(user => 
+      user.userRoles.some(ur => ur.role.name === 'patient')
+    )
     let patientsCreated = 0
     
     for (const user of patientUsers) {
@@ -44,14 +50,19 @@ export default class extends BaseSeeder {
     }
 
     // Créer des enregistrements personnel
-    const staffUsers = users.filter(user => user.role !== 'patient')
+    const staffUsers = users.filter(user => 
+      !user.userRoles.some(ur => ur.role.name === 'patient')
+    )
     let personnelCreated = 0
     
     for (const user of staffUsers) {
       let typePersonnelId = null
       
+      // Récupérer le rôle principal de l'utilisateur
+      const primaryRole = user.userRoles[0]?.role.name
+      
       // Mapper les rôles aux types de personnel
-      switch (user.role) {
+      switch (primaryRole) {
         case 'admin':
           typePersonnelId = typePersonnels.find(tp => tp.name === 'directeur_medical')?.id
           break
