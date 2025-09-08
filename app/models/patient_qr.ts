@@ -76,9 +76,7 @@ export default class PatientQr extends BaseModel {
       .where('is_active', true)
       .preload('patient', (query) => {
         query.preload('tenant')
-        query.preload('pregnancies', (pregQuery) => {
-          pregQuery.where('is_active', true)
-        })
+      
       })
       .first()
 

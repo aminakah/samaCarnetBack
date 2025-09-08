@@ -16,25 +16,31 @@ export default class MainSeeder extends BaseSeeder {
       // Phase 1: Core System Data
       console.log('\n📋 Phase 1: Core System Data')
       console.log('─'.repeat(40))
-      
+       // 3. Personnel Categories, Subcategories, Types (hierarchical structure)
+       await this.runSeeder('PersonnelCategoriesSeeder')
+
       // 1. Tenants (required first)
       await this.runSeeder('TenantsSeeder')
+
+      // 2. Roles (required before users)
+      await this.runSeeder('BasicRolesSeeder')
       
-      // 2. Users (depends on tenants)
+      // 3. Users (depends on roles)
       await this.runSeeder('UsersSeeder')
       
       // Phase 2: RBAC Infrastructure
       console.log('\n🔐 Phase 2: RBAC Infrastructure')
       console.log('─'.repeat(40))
       
-      // 3. Personnel Categories, Subcategories, Types (hierarchical structure)
-      await this.runSeeder('PersonnelCategoriesSeeder')
+     
       
       // 4. Permissions (independent)
-      await this.runSeeder('PermissionsSeeder')
+      // await this.runSeeder('PermissionsSeeder')
       
-      // 5. Roles (depends on type_personnel and permissions)
-      await this.runSeeder('BasicRolesSeeder')
+      // 5. Role Permissions (depends on roles and permissions)
+      // await this.runSeeder('RolePermissionsSeeder')
+      
+      
       
       // Phase 3: Medical System Data
       console.log('\n🏥 Phase 3: Medical System Data')
@@ -53,17 +59,7 @@ export default class MainSeeder extends BaseSeeder {
       console.log('\n📝 Phase 4: Sample Data & Workflows')
       console.log('─'.repeat(40))
       
-      // 9. Patients and Personnel (depends on users)
-      await this.runSeeder('SimplePatientsPPersonnelSeeder')
-      
-      // 10. RBAC Associations (depends on roles and permissions)
-      await this.runSeeder('RbacAssociationsSeeder')
-      
-      // 11. User Roles (depends on users and roles)
-      await this.runSeeder('UserRolesSeeder')
-      
-      // 12. User Permissions (depends on users and permissions)  
-      await this.runSeeder('UserPermissionsSeeder')
+    
       
       // 13. Medical Visits (depends on patients, personnel, types)
       await this.runSeeder('VisitesSeeder')
@@ -73,15 +69,9 @@ export default class MainSeeder extends BaseSeeder {
       console.log('─'.repeat(40))
       
       // 14. Sync Logs (system tracking)
-      await this.runSeeder('SyncLogsSeeder')
+      // await this.runSeeder('SyncLogsSeeder')
       
-      // 13. Demo Data (demo tenant specific) - Skip to avoid conflicts with TenantsSeeder
-      // await this.runSeeder('DemoSeeder')
-      
-      // 14. Dev Data (development environment) - Skip due to JSON serialization issues
-      // if (Application.inDev) {
-      //   await this.runSeeder('DevSeeder')
-      // }
+     
       
       // Completion Summary
       console.log('\n' + '='.repeat(60))

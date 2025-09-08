@@ -1,3 +1,6 @@
+import Patient from '#models/patient'
+import Personnel from '#models/personnel'
+import Tenant from '#models/tenant'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import db from '@adonisjs/lucid/services/db'
 
@@ -6,8 +9,11 @@ export default class extends BaseSeeder {
     console.log('  🏥 Seeding medical visits...')
     
     // Récupérer les données nécessaires
-    const patients = await db.from('patients').select('*')
-    const personnel = await db.from('personnel').select('*')
+    const patients = await Patient.query()
+    const tenants = await Tenant.query()
+    const tenantId = tenants[Math.floor(Math.random() * tenants.length)];
+ 
+    const personnel = await Personnel.query()
     const typeVisites = await db.from('type_visite').select('*')
     
     console.log(`Found ${patients.length} patients, ${personnel.length} personnel, ${typeVisites.length} visit types, `)
@@ -22,23 +28,20 @@ export default class extends BaseSeeder {
     
     // Créer différents types de visites pour chaque patient
     for (const patient of patients) {
-      const patientPersonnel = personnel.filter(p => p.tenant_id === patient.tenant_id)
-      if (patientPersonnel.length === 0) continue
-      
-      // const patientPregnancy = pregnancies.find(p => p.patient_id === patient.id)
+     
       
       // 1. Consultation prénatale (si grossesse active)
       if (patients) {
         const prenatalVisit = typeVisites.find(tv => tv.name === 'consultation_prenatal_1t')
-        const midwife = patientPersonnel.find(p => p.type_personnel_id === 2) || patientPersonnel[0] // Sage-femme ou premier disponible
+        const midwife = personnel.find(p => p.typePersonnel.name === "sage-femme") || personnel[0].id // Sage-femme ou premier disponible
         
         if (prenatalVisit && midwife) {
           const visitDate = new Date(now.getTime() - (Math.random() * 30) * 24 * 60 * 60 * 1000) // Derniers 30 jours
           
           visitesToCreate.push({
-            tenant_id: patient.tenant_id,
+            tenant_id: tenantId,
             patient_id: patient.id,
-            personnel_id: midwife.id,
+            personnel_id: midwife,
             type_visite_id: prenatalVisit.id,
             scheduled_at: visitDate,
             started_at: visitDate,
@@ -72,13 +75,14 @@ export default class extends BaseSeeder {
       
       // 2. Consultation générale récente
       const generalVisit = typeVisites.find(tv => tv.name === 'consultation_generale')
-      const doctor = patientPersonnel.find(p => p.type_personnel_id === 6) || patientPersonnel[0] // Médecin ou premier disponible
+      const doctor = personnel.find(p => p.typePersonnelId === 6) || personnel[0] // Médecin ou premier disponible
       
       if (generalVisit && doctor) {
         const visitDate = new Date(now.getTime() - (Math.random() * 60) * 24 * 60 * 60 * 1000) // Derniers 60 jours
         
+
         visitesToCreate.push({
-          tenant_id: patient.tenant_id,
+          tenant_id: tenantId,
           patient_id: patient.id,
           personnel_id: doctor.id,
           type_visite_id: generalVisit.id,
@@ -111,11 +115,11 @@ export default class extends BaseSeeder {
       // 3. Visite prévue (future)
       if (Math.random() > 0.5) { // 50% de chance
         const futureVisitType = typeVisites[Math.floor(Math.random() * Math.min(5, typeVisites.length))]
-        const availablePersonnel = patientPersonnel[Math.floor(Math.random() * patientPersonnel.length)]
+        const availablePersonnel = personnel[Math.floor(Math.random() * personnel.length)]
         const futureDate = new Date(now.getTime() + (Math.random() * 30) * 24 * 60 * 60 * 1000) // Prochains 30 jours
         
         visitesToCreate.push({
-          tenant_id: patient.tenant_id,
+          tenant_id: tenantId,
           patient_id: patient.id,
           personnel_id: availablePersonnel.id,
           type_visite_id: futureVisitType.id,

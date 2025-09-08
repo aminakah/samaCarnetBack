@@ -1,30 +1,33 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'personnel_subcategories'
+  protected tableName = 'medical_histories'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
+      
       table
-        .integer('category_id')
+        .integer('patient_id')
         .unsigned()
         .notNullable()
         .references('id')
-        .inTable('personnel_categories')
+        .inTable('patients')
         .onDelete('CASCADE')
         .index()
       
-      table.string('name', 100).notNullable().index()
-      table.string('nom_subcategory', 200).notNullable()
+      table.enum('type', ['allergy', 'condition', 'surgery', 'medication', 'family_history']).notNullable()
+      table.string('title', 200).notNullable()
       table.text('description').nullable()
-      table.boolean('requires_specialization').notNullable().defaultTo(false)
-      table.integer('sort_order').notNullable().defaultTo(1)
+      table.date('date_recorded').nullable()
+      table.enum('severity', ['low', 'medium', 'high', 'critical']).nullable()
       table.boolean('is_active').notNullable().defaultTo(true)
+      
       table.timestamps(true, true)
-
-      // Index composé pour unicité par catégorie
-      table.unique(['category_id', 'name'])
+      table.timestamp('deleted_at').nullable()
+      
+      table.index(['patient_id', 'type'])
+      table.index(['is_active'])
     })
   }
 

@@ -1,6 +1,5 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import PersonnelCategory from '#models/personnel_category'
-import PersonnelSubcategory from '#models/personnel_subcategory'
 import TypePersonnel from '#models/type_personnel'
 
 export default class extends BaseSeeder {
@@ -45,111 +44,12 @@ export default class extends BaseSeeder {
       }
     ])
 
-    // Créer les sous-catégories
-    const subcategories = await PersonnelSubcategory.createMany([
-      // Sous-catégories médicales
-      {
-        categoryId: categories[0].id, // medical
-        name: 'obstetrique',
-        nomSubcategory: 'Obstétrique',
-        description: 'Spécialité obstétrique et gynécologie',
-        requiresSpecialization: true,
-        sortOrder: 1,
-        isActive: true
-      },
-      {
-        categoryId: categories[0].id, // medical
-        name: 'pediatrie',
-        nomSubcategory: 'Pédiatrie',
-        description: 'Spécialité pédiatrique',
-        requiresSpecialization: true,
-        sortOrder: 2,
-        isActive: true
-      },
-      {
-        categoryId: categories[0].id, // medical
-        name: 'medecine_generale',
-        nomSubcategory: 'Médecine Générale',
-        description: 'Médecine générale',
-        requiresSpecialization: false,
-        sortOrder: 3,
-        isActive: true
-      },
-      {
-        categoryId: categories[0].id, // medical
-        name: 'anesthesie',
-        nomSubcategory: 'Anesthésie',
-        description: 'Anesthésie-réanimation',
-        requiresSpecialization: true,
-        sortOrder: 4,
-        isActive: true
-      },
-
-      // Sous-catégories paramédicales
-      {
-        categoryId: categories[1].id, // paramedical
-        name: 'soins_generaux',
-        nomSubcategory: 'Soins Généraux',
-        description: 'Soins infirmiers généraux',
-        requiresSpecialization: false,
-        sortOrder: 1,
-        isActive: true
-      },
-      {
-        categoryId: categories[1].id, // paramedical
-        name: 'soins_specialises',
-        nomSubcategory: 'Soins Spécialisés',
-        description: 'Soins infirmiers spécialisés',
-        requiresSpecialization: true,
-        sortOrder: 2,
-        isActive: true
-      },
-      {
-        categoryId: categories[1].id, // paramedical
-        name: 'reeducation',
-        nomSubcategory: 'Rééducation',
-        description: 'Kinésithérapie et rééducation',
-        requiresSpecialization: true,
-        sortOrder: 3,
-        isActive: true
-      },
-
-      // Sous-catégories administratives
-      {
-        categoryId: categories[2].id, // administratif
-        name: 'direction',
-        nomSubcategory: 'Direction',
-        description: 'Direction et management',
-        requiresSpecialization: false,
-        sortOrder: 1,
-        isActive: true
-      },
-      {
-        categoryId: categories[2].id, // administratif
-        name: 'gestion',
-        nomSubcategory: 'Gestion',
-        description: 'Gestion administrative',
-        requiresSpecialization: false,
-        sortOrder: 2,
-        isActive: true
-      },
-      {
-        categoryId: categories[2].id, // administratif
-        name: 'accueil',
-        nomSubcategory: 'Accueil',
-        description: 'Accueil et orientation',
-        requiresSpecialization: false,
-        sortOrder: 3,
-        isActive: true
-      }
-    ])
-
     // Créer les types de personnel détaillés
     const typePersonnels = await TypePersonnel.createMany([
-      // MEDICAL - Obstétrique
+      // MEDICAL
       {
-        categoryId: categories[0].id,
-        subcategoryId: subcategories[0].id, // obstetrique
+        categoryId: categories.find(category => category.name === 'medical')?.id,
+        subcategoryId: null,
         name: 'sage_femme_junior',
         nomType: 'Sage-femme Junior',
         description: 'Sage-femme débutante en formation',
@@ -166,8 +66,8 @@ export default class extends BaseSeeder {
         isActive: true
       },
       {
-        categoryId: categories[0].id,
-        subcategoryId: subcategories[0].id, // obstetrique
+        categoryId: categories.find(category => category.name === 'medical')?.id,
+        subcategoryId: null,
         name: 'sage_femme',
         nomType: 'Sage-femme',
         description: 'Sage-femme expérimentée',
@@ -184,26 +84,8 @@ export default class extends BaseSeeder {
         isActive: true
       },
       {
-        categoryId: categories[0].id,
-        subcategoryId: subcategories[0].id, // obstetrique
-        name: 'sage_femme_senior',
-        nomType: 'Sage-femme Senior',
-        description: 'Sage-femme senior avec responsabilités',
-        level: 3,
-        canPrescribe: true,
-        canSupervise: true,
-        canValidateActs: true,
-        requiresLicense: true,
-        minExperienceYears: 5,
-        isMedicalStaff: true,
-        isAdministrative: false,
-        isTechnical: false,
-        sortOrder: 3,
-        isActive: true
-      },
-      {
-        categoryId: categories[0].id,
-        subcategoryId: subcategories[0].id, // obstetrique
+        categoryId: categories.find(category => category.name === 'medical')?.id,
+        subcategoryId: null,
         name: 'gyneco_obstetricien',
         nomType: 'Gynéco-obstétricien',
         description: 'Médecin spécialiste en gynéco-obstétrique',
@@ -216,34 +98,12 @@ export default class extends BaseSeeder {
         isMedicalStaff: true,
         isAdministrative: false,
         isTechnical: false,
-        sortOrder: 4,
+        sortOrder: 3,
         isActive: true
       },
-
-      // MEDICAL - Pédiatrie
       {
-        categoryId: categories[0].id,
-        subcategoryId: subcategories[1].id, // pediatrie
-        name: 'pediatre',
-        nomType: 'Pédiatre',
-        description: 'Médecin pédiatre',
-        level: 3,
-        canPrescribe: true,
-        canSupervise: true,
-        canValidateActs: true,
-        requiresLicense: true,
-        minExperienceYears: 6,
-        isMedicalStaff: true,
-        isAdministrative: false,
-        isTechnical: false,
-        sortOrder: 1,
-        isActive: true
-      },
-
-      // MEDICAL - Médecine générale
-      {
-        categoryId: categories[0].id,
-        subcategoryId: subcategories[2].id, // medecine_generale
+        categoryId: categories.find(category => category.name === 'medical')?.id,
+        subcategoryId: null,
         name: 'medecin_generaliste',
         nomType: 'Médecin Généraliste',
         description: 'Médecin généraliste',
@@ -256,14 +116,14 @@ export default class extends BaseSeeder {
         isMedicalStaff: true,
         isAdministrative: false,
         isTechnical: false,
-        sortOrder: 1,
+        sortOrder: 4,
         isActive: true
       },
 
-      // PARAMEDICAL - Soins généraux
+      // PARAMEDICAL
       {
-        categoryId: categories[1].id,
-        subcategoryId: subcategories[4].id, // soins_generaux
+        categoryId: categories.find(category => category.name === 'paramedical')?.id,
+        subcategoryId: null,
         name: 'infirmier',
         nomType: 'Infirmier/ère',
         description: 'Personnel infirmier diplômé',
@@ -279,29 +139,11 @@ export default class extends BaseSeeder {
         sortOrder: 1,
         isActive: true
       },
-      {
-        categoryId: categories[1].id,
-        subcategoryId: subcategories[4].id, // soins_generaux
-        name: 'infirmier_senior',
-        nomType: 'Infirmier/ère Senior',
-        description: 'Infirmier expérimenté avec responsabilités',
-        level: 3,
-        canPrescribe: false,
-        canSupervise: true,
-        canValidateActs: true,
-        requiresLicense: true,
-        minExperienceYears: 5,
-        isMedicalStaff: true,
-        isAdministrative: false,
-        isTechnical: false,
-        sortOrder: 2,
-        isActive: true
-      },
 
-      // ADMINISTRATIF - Direction
+      // ADMINISTRATIF
       {
-        categoryId: categories[2].id,
-        subcategoryId: subcategories[7].id, // direction
+        categoryId: categories.find(category => category.name === 'administratif')?.id,
+        subcategoryId: null,
         name: 'directeur_medical',
         nomType: 'Directeur Médical',
         description: 'Directeur des affaires médicales',
@@ -317,11 +159,9 @@ export default class extends BaseSeeder {
         sortOrder: 1,
         isActive: true
       },
-
-      // ADMINISTRATIF - Gestion
       {
-        categoryId: categories[2].id,
-        subcategoryId: subcategories[8].id, // gestion
+        categoryId: categories.find(category => category.name === 'administratif')?.id,
+        subcategoryId: null,
         name: 'secretaire_medicale',
         nomType: 'Secrétaire Médicale',
         description: 'Secrétaire spécialisée médicale',
@@ -334,32 +174,12 @@ export default class extends BaseSeeder {
         isMedicalStaff: false,
         isAdministrative: true,
         isTechnical: false,
-        sortOrder: 1,
-        isActive: true
-      },
-
-      // ADMINISTRATIF - Accueil
-      {
-        categoryId: categories[2].id,
-        subcategoryId: subcategories[9].id, // accueil
-        name: 'receptionniste',
-        nomType: 'Réceptionniste',
-        description: 'Personnel d\'accueil et orientation',
-        level: 1,
-        canPrescribe: false,
-        canSupervise: false,
-        canValidateActs: false,
-        requiresLicense: false,
-        minExperienceYears: 0,
-        isMedicalStaff: false,
-        isAdministrative: true,
-        isTechnical: false,
-        sortOrder: 1,
+        sortOrder: 2,
         isActive: true
       }
     ])
 
-    console.log('✅ Personnel categories, subcategories and types seeded successfully')
-    console.log(`📊 Created: ${categories.length} categories, ${subcategories.length} subcategories, ${typePersonnels.length} personnel types`)
+    console.log('✅ Personnel categories and types seeded successfully')
+    console.log(`📊 Created: ${categories.length} categories, ${typePersonnels.length} personnel types`)
   }
 }

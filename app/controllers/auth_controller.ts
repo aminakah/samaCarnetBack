@@ -31,12 +31,12 @@ export default class AuthController {
 
       const user = authResult.user!
 
-      // Mettre à jour le tenant de l'utilisateur si nécessaire (seulement pour les tenants numériques)
-      const userTenantId = user.tenantId?.toString()
-      if (userTenantId !== tenantId && tenantId !== 'global' && !isNaN(parseInt(tenantId))) {
-        user.tenantId = parseInt(tenantId)
-        await user.save()
-      }
+      // // Mettre à jour le tenant de l'utilisateur si nécessaire (seulement pour les tenants numériques)
+      // const userTenantId = user.tenantId?.toString()
+      // if (userTenantId !== tenantId && tenantId !== 'global' && !isNaN(parseInt(tenantId))) {
+      //   user.tenantId = parseInt(tenantId)
+      //   await user.save()
+      // }
 
       // Update login tracking
       await user.updateLastLogin(request.ip())

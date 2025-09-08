@@ -88,6 +88,8 @@ export default class VaccineType extends BaseModel {
   })
   declare contraindications: string[] | null
 
+  
+
   @column({
     prepare: (value: any) => value ? JSON.stringify(value) : null,
     consume: (value: string | null) => (value ? JSON.parse(value) : null) as any,

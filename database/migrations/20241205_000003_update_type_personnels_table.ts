@@ -23,7 +23,7 @@ export default class extends BaseSchema {
         .unsigned()
         .nullable()
         .references('id')
-        .inTable('personnel_subcategories')
+        .inTable('personnel_categories')
         .onDelete('SET NULL')
         .index()
       

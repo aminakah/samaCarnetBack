@@ -44,15 +44,7 @@ export default class extends BaseSchema {
         .onDelete('RESTRICT')
         .index()
       
-      // Lien vers grossesse (optionnel)
-      table
-        .integer('pregnancy_id')
-        .unsigned()
-        .nullable()
-        .references('id')
-        .inTable('patients')
-        .onDelete('SET NULL')
-        .index()
+     
       
       // Planning et timing
       table.dateTime('scheduled_at').nullable()
@@ -123,7 +115,6 @@ export default class extends BaseSchema {
       table.index(['tenant_id', 'status'])
       table.index(['patient_id', 'scheduled_at'])
       table.index(['personnel_id', 'scheduled_at'])
-      table.index(['pregnancy_id', 'scheduled_at'])
     })
   }
 

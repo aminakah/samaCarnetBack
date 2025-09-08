@@ -1,5 +1,4 @@
 import User from '#models/user'
-import Tenant from '#models/tenant'
 import Role from '#models/role'
 import UserRole from '#models/user_role'
 import hash from '@adonisjs/core/services/hash'
@@ -21,9 +20,7 @@ export default class AuthService {
         .where('email', email)
         .where('status', 'active')
         .whereNull('deleted_at')
-        .preload('tenant')
-        .preload('userRoles')
-        .preload('userPermissions')
+        .preload('role')
         .first()
       
       if (!user) {
@@ -35,16 +32,23 @@ export default class AuthService {
         return { success: false, message: 'Invalid credentials' }
       }
 
-      // // Check tenant is active
-      // if (!user.tenant.isActive) {
-      //   return { success: false, message: 'Tenant subscription expired or inactive' }
-      // }
+      // Load specific data based on role
+      if (user.role.name === 'personnel') {
+        await user.load('personnel', (query) => {
+          query.preload('tenant')
+        })
+        
+        if (!user.personnel.tenant.isActive) {
+          return { success: false, message: 'Tenant subscription expired or inactive' }
+        }
+      } else if (user.role.name === 'patient') {
+        await user.load('patient')
+      }
 
       return { success: true, user }
     } catch (error) {
       console.log(error)
-
-      return { success: false, message: 'Authentication failed' }
+      return { success: false, message: error.message|| 'Authentication failed' }
     }
   }
 
@@ -52,7 +56,7 @@ export default class AuthService {
    * Register new user
    */
   static async register(data: {
-    tenantId: number
+    roleId: number
     firstName: string
     lastName: string
     email: string
@@ -68,7 +72,7 @@ export default class AuthService {
       // Check if user already exists in tenant
       const existingUser = await User.query()
         .where('email', data.email)
-        .where('tenant_id', data.tenantId)
+        .where('roleId', data.roleId)
         .whereNull('deleted_at')
         .first()
 
@@ -78,7 +82,7 @@ export default class AuthService {
 
       // Create user
       const user = new User()
-      user.tenantId = data.tenantId
+      user.roleId = data.roleId
       user.firstName = data.firstName
       user.lastName = data.lastName
       user.email = data.email
@@ -100,7 +104,6 @@ export default class AuthService {
           await UserRole.create({
             userId: user.id,
             roleId: role.id,
-            tenantId: user.tenantId,
             assignedAt: DateTime.now(),
             isActive: true
           })
@@ -178,15 +181,13 @@ export default class AuthService {
   /**
    * Get users by role in tenant
    */
-  static async getUsersByRole(tenantId: number, roleName: string): Promise<User[]> {
-    return await User.findByRoleInTenant(tenantId, roleName)
-  }
+  
 
   /**
    * Create default admin user for tenant
    */
   static async createDefaultAdmin(
-    tenant: Tenant, 
+    role: Role, 
     adminData: {
       firstName: string
       lastName: string
@@ -196,7 +197,7 @@ export default class AuthService {
     }
   ): Promise<{ success: boolean; user?: User; message?: string }> {
     return await this.register({
-      tenantId: tenant.id,
+      roleId: role.id,
       firstName: adminData.firstName,
       lastName: adminData.lastName,
       email: adminData.email,

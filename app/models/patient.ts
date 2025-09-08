@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, hasMany, beforeSave } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
-import Tenant from './tenant.js'
-import Personnel from './personnel.js'
+import { BaseModel, column, belongsTo, hasMany, beforeSave, hasManyThrough } from '@adonisjs/lucid/orm'
+import type { HasMany, HasManyThrough } from '@adonisjs/lucid/types/relations'
 import Visite from './visite.js'
+import MedicalHistory from './medical_history.js'
+import VisitHistory from './visit_history.js'
 
 /**
  * Patient model for managing patient information
@@ -13,34 +13,10 @@ export default class Patient extends BaseModel {
   declare id: number
 
   @column()
-  declare tenantId: number
-
-  @column()
   declare patientNumber: string
 
   @column()
   declare nationalId: string | null
-
-  @column()
-  declare firstName: string
-
-  @column()
-  declare lastName: string
-
-  @column.date()
-  declare dateOfBirth: DateTime
-
-  @column()
-  declare gender: 'male' | 'female'
-
-  @column()
-  declare phone: string | null
-
-  @column()
-  declare email: string | null
-
-  @column()
-  declare address: string | null
 
   @column()
   declare city: string | null
@@ -78,14 +54,7 @@ export default class Patient extends BaseModel {
   })
   declare currentMedications: string[] | null
 
-  @column()
-  declare assignedDoctorId: number | null
 
-  @column()
-  declare assignedMidwifeId: number | null
-
-  @column()
-  declare isActive: boolean
 
   @column()
   declare notes: string | null
@@ -100,49 +69,30 @@ export default class Patient extends BaseModel {
   declare deletedAt: DateTime | null
 
   // Relationships
-  @belongsTo(() => Tenant)
-  declare tenant: BelongsTo<typeof Tenant>
-
-  @belongsTo(() => Personnel, {
-    foreignKey: 'assignedDoctorId',
-  })
-  declare assignedDoctor: BelongsTo<typeof Personnel>
-
-  @belongsTo(() => Personnel, {
-    foreignKey: 'assignedMidwifeId',
-  })
-  declare assignedMidwife: BelongsTo<typeof Personnel>
 
   @hasMany(() => Visite)
   declare visites: HasMany<typeof Visite>
+
+  @hasMany(() => MedicalHistory)
+  declare medicalHistories: HasMany<typeof MedicalHistory>
+
+  // @hasManyThrough([
+  //   () => VisitHistory,
+  //   () => Visite
+  // ])
+  // declare visitHistories: HasManyThrough<[typeof VisitHistory, typeof Visite]>
 
 
   // Auto-generate patient number before save
   @beforeSave()
   static async generatePatientNumber(patient: Patient) {
     if (patient.$isNew && !patient.patientNumber) {
-      const count = await Patient.query()
-        .where('tenant_id', patient.tenantId)
-        .count('* as total')
+      const count = await Patient.query().count('* as total')
       
       const patientCount = Number(count[0].$extras.total) + 1
       const year = new Date().getFullYear().toString().slice(-2)
       patient.patientNumber = `P${year}${patientCount.toString().padStart(6, '0')}`
     }
-  }
-
-  /**
-   * Get full name
-   */
-  get fullName(): string {
-    return `${this.firstName} ${this.lastName}`.trim()
-  }
-
-  /**
-   * Get age in years
-   */
-  get age(): number {
-    return DateTime.now().diff(this.dateOfBirth, 'years').years
   }
 
 
@@ -189,44 +139,24 @@ export default class Patient extends BaseModel {
   }
 
   /**
-   * Search patients in tenant
+   * Search patients
    */
-  static async searchInTenant(
-    tenantId: number, 
+  static async search(
     searchTerm: string,
     options: {
-      includeInactive?: boolean
       limit?: number
     } = {}
   ) {
-    const { includeInactive = false, limit = 50 } = options
+    const { limit = 50 } = options
     
-    const query = this.query()
-      .where('tenant_id', tenantId)
+    return await this.query()
       .where((subQuery) => {
         subQuery
-          .whereILike('first_name', `%${searchTerm}%`)
-          .orWhereILike('last_name', `%${searchTerm}%`)
-          .orWhereILike('patient_number', `%${searchTerm}%`)
-          .orWhereILike('phone', `%${searchTerm}%`)
+          .whereILike('patient_number', `%${searchTerm}%`)
+          .orWhereILike('national_id', `%${searchTerm}%`)
       })
-      .preload('assignedDoctor', (query) => {
-        query.preload('user')
-        query.preload('typePersonnel')
-      })
-      .preload('assignedMidwife', (query) => {
-        query.preload('user')
-        query.preload('typePersonnel')
-      })
-      .orderBy('last_name')
-      .orderBy('first_name')
+      .orderBy('patient_number')
       .limit(limit)
-
-    if (!includeInactive) {
-      query.where('is_active', true)
-    }
-
-    return await query
   }
 
   /**
@@ -234,7 +164,6 @@ export default class Patient extends BaseModel {
    */
   async softDelete(): Promise<void> {
     this.deletedAt = DateTime.now()
-    this.isActive = false
     await this.save()
   }
 }

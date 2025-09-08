@@ -40,14 +40,14 @@ export default class extends BaseSchema {
       table.json('specialties').nullable().comment('Array of specialties')
       table.string('department', 100).nullable()
       table.string('service', 100).nullable()
+
+      table.text('bio').nullable()
       
       // Informations contractuelles
       table.date('hire_date').nullable()
       table.date('end_date').nullable()
       table.enum('contract_type', ['CDI', 'CDD', 'VACATION', 'STAGE']).defaultTo('CDI')
       
-      // Status et gestion
-      table.boolean('is_active').notNullable().defaultTo(true)
       table.boolean('is_on_duty').notNullable().defaultTo(false)
       table.text('notes').nullable()
       
@@ -58,7 +58,7 @@ export default class extends BaseSchema {
       // Index composés
       table.unique(['tenant_id', 'user_id'])
       table.index(['tenant_id', 'type_personnel_id'])
-      table.index(['is_active', 'is_on_duty'])
+      table.index(['is_on_duty'])
     })
   }
 

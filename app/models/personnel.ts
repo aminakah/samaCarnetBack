@@ -6,6 +6,7 @@ import User from './user.js'
 import TypePersonnel from './type_personnel.js'
 import Patient from './patient.js'
 import Visite from './visite.js'
+import VisitHistory from './visit_history.js'
 
 /**
  * Personnel model linking users to their professional roles
@@ -28,7 +29,7 @@ export default class Personnel extends BaseModel {
 
   @column({
     prepare: (value) => value ? JSON.stringify(value) : null,
-    consume: (value: string) => JSON.parse(value),
+    consume: (value: string) => value ? JSON.parse(value) : null,
   })
   declare specialties: string[] | null
 
@@ -38,6 +39,9 @@ export default class Personnel extends BaseModel {
   @column()
   declare service: string | null
 
+  @column()
+  declare bio: string | null
+
   @column.date()
   declare hireDate: DateTime | null
 
@@ -46,9 +50,6 @@ export default class Personnel extends BaseModel {
 
   @column()
   declare contractType: 'CDI' | 'CDD' | 'VACATION' | 'STAGE'
-
-  @column()
-  declare isActive: boolean
 
   @column()
   declare isOnDuty: boolean
@@ -75,15 +76,7 @@ export default class Personnel extends BaseModel {
   @belongsTo(() => TypePersonnel)
   declare typePersonnel: BelongsTo<typeof TypePersonnel>
 
-  @hasMany(() => Patient, {
-    foreignKey: 'assignedDoctorId',
-  })
-  declare assignedPatientsAsDoctor: HasMany<typeof Patient>
 
-  @hasMany(() => Patient, {
-    foreignKey: 'assignedMidwifeId',
-  })
-  declare assignedPatientsAsMidwife: HasMany<typeof Patient>
 
   @hasMany(() => Visite)
   declare visites: HasMany<typeof Visite>
@@ -97,6 +90,11 @@ export default class Personnel extends BaseModel {
     foreignKey: 'validatedBy',
   })
   declare validatedVisites: HasMany<typeof Visite>
+
+  @hasMany(() => VisitHistory, {
+    foreignKey: 'modifiedBy'
+  })
+  declare visitHistories: HasMany<typeof VisitHistory>
 
   /**
    * Get full name from related user
@@ -142,14 +140,8 @@ export default class Personnel extends BaseModel {
     pendingVisites: number
   }> {
     const [assignedPatients, todayVisites, pendingVisites] = await Promise.all([
-      // Count assigned patients
-      Patient.query()
-        .where((query) => {
-          query.where('assigned_doctor_id', this.id)
-            .orWhere('assigned_midwife_id', this.id)
-        })
-        .where('is_active', true)
-        .count('* as total'),
+      // Count assigned patients - simplified since patients don't have assigned personnel in new structure
+      Promise.resolve([{ $extras: { total: 0 } }]),
       
       // Count today's visites
       Visite.query()
@@ -184,8 +176,8 @@ export default class Personnel extends BaseModel {
   ) {
     const query = this.query()
       .where('tenant_id', tenantId)
-      .where('is_active', true)
       .where('is_on_duty', true)
+      .whereNull('deleted_at')
       .preload('user')
       .preload('typePersonnel')
 
@@ -253,7 +245,6 @@ export default class Personnel extends BaseModel {
    */
   async softDelete(): Promise<void> {
     this.deletedAt = DateTime.now()
-    this.isActive = false
     await this.save()
   }
 }

@@ -7,7 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
       table.string('name', 100).notNullable().unique().index()
-      table.string('nom_category', 200).notNullable()
+      table.string('nom_category', 200).nullable()
       table.text('description').nullable()
       table.string('color_code', 7).nullable().defaultTo('#2E7D32')
       table.string('icon', 50).nullable().defaultTo('fa-user')
