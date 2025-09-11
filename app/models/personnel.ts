@@ -27,11 +27,11 @@ export default class Personnel extends BaseModel {
   @column()
   declare licenseNumber: string | null
 
-  @column({
-    prepare: (value) => value ? JSON.stringify(value) : null,
-    consume: (value: string) => value ? JSON.parse(value) : null,
-  })
-  declare specialties: string[] | null
+  // @column({
+  //   prepare: (value) => value ? JSON.stringify(value) : null,
+  //   consume: (value: string) => value ? JSON.parse(value) : null,
+  // })
+  // declare specialties: string[] | null
 
   @column()
   declare department: string | null
@@ -205,7 +205,7 @@ export default class Personnel extends BaseModel {
    */
   async hasRole(roleName: string): Promise<boolean> {
     await this.load('user')
-    return await this.user.hasRole(roleName, this.tenantId)
+    return await this.user.hasRole(roleName)
   }
 
   /**
@@ -213,15 +213,7 @@ export default class Personnel extends BaseModel {
    */
   async hasPermission(permissionName: string): Promise<boolean> {
     await this.load('user')
-    return await this.user.hasPermission(permissionName, this.tenantId)
-  }
-
-  /**
-   * Get all roles for this personnel
-   */
-  async getRoles(): Promise<any[]> {
-    await this.load('user')
-    return await this.user.getActiveRoles(this.tenantId)
+    return await this.user.hasPermission(permissionName)
   }
 
   /**

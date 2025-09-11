@@ -2,7 +2,6 @@ import { DateTime } from 'luxon'
 import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import PersonnelCategory from './personnel_category.js'
-import PersonnelSubcategory from './personnel_subcategory.js'
 import Personnel from './personnel.js'
 import Role from './role.js'
 
@@ -75,10 +74,10 @@ export default class TypePersonnel extends BaseModel {
   })
   declare category: BelongsTo<typeof PersonnelCategory>
 
-  @belongsTo(() => PersonnelSubcategory, {
+  @belongsTo(() => PersonnelCategory, {
     foreignKey: 'subcategoryId'
   })
-  declare subcategory: BelongsTo<typeof PersonnelSubcategory>
+  declare subcategory: BelongsTo<typeof PersonnelCategory>
 
   @hasMany(() => Personnel)
   declare personnel: HasMany<typeof Personnel>

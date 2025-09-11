@@ -185,7 +185,7 @@ export default class UsersSeeder extends BaseSeeder {
           userId: user.id,
           typePersonnelId: randomType?.id , 
           licenseNumber: `LIC-${user.id}`,
-          specialties: ['General'],
+          // specialties: ['General'],
           bio: 'Personnel médical',
           hireDate: DateTime.now(),
           contractType: 'CDI',

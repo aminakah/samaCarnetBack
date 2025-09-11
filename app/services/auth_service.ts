@@ -12,7 +12,7 @@ export default class AuthService {
    * Authenticate user within tenant
    */
   static async authenticate(
-    email: string, 
+    email: string,
     password: string
   ): Promise<{ success: boolean; user?: User; message?: string }> {
     try {
@@ -22,11 +22,12 @@ export default class AuthService {
         .whereNull('deleted_at')
         .preload('role')
         .first()
-      
+      console.log({ user })
+
       if (!user) {
-        return { success: false, message: 'Invalid credentials' }
+        return { success: false, message: 'Invalid credeqqqqntials' }
       }
-      
+
       const isValidPassword = await hash.verify(user.password, password)
       if (!isValidPassword) {
         return { success: false, message: 'Invalid credentials' }
@@ -36,19 +37,24 @@ export default class AuthService {
       if (user.role.name === 'personnel') {
         await user.load('personnel', (query) => {
           query.preload('tenant')
+          .preload('typePersonnel',query=>{
+            query.preload('category').preload('subcategory')
+          })
         })
-        
-        if (!user.personnel.tenant.isActive) {
-          return { success: false, message: 'Tenant subscription expired or inactive' }
-        }
+
+        // if (!user.personnel.tenant.isActive) {
+        //   return { success: false, message: 'Tenant subscription expired or inactive' }
+        // }
       } else if (user.role.name === 'patient') {
         await user.load('patient')
+      } else {
+        await user.load('superAdmin')
       }
 
       return { success: true, user }
     } catch (error) {
       console.log(error)
-      return { success: false, message: error.message|| 'Authentication failed' }
+      return { success: false, message: error.message || 'Authentication failed' }
     }
   }
 
@@ -105,7 +111,7 @@ export default class AuthService {
             userId: user.id,
             roleId: role.id,
             assignedAt: DateTime.now(),
-            isActive: true
+            isActive: true,
           })
         }
       }
@@ -127,10 +133,7 @@ export default class AuthService {
   /**
    * Validate sync token
    */
-  static async validateSyncToken(
-    tenantId: number,
-    syncToken: string
-  ): Promise<User | null> {
+  static async validateSyncToken(tenantId: number, syncToken: string): Promise<User | null> {
     try {
       return await User.query()
         .where('tenant_id', tenantId)
@@ -161,13 +164,13 @@ export default class AuthService {
   static async canAccessPatientData(user: User, patientId: number): Promise<boolean> {
     // Admin can access all
     if (await user.isAdmin()) return true
-    
+
     // Medical staff can access assigned patients (simplified for now)
     if (await user.isMedicalStaff()) return true
-    
+
     // Patients can only access their own data
     if (await user.isPatient()) return user.id === patientId
-    
+
     return false
   }
 
@@ -181,13 +184,12 @@ export default class AuthService {
   /**
    * Get users by role in tenant
    */
-  
 
   /**
    * Create default admin user for tenant
    */
   static async createDefaultAdmin(
-    role: Role, 
+    role: Role,
     adminData: {
       firstName: string
       lastName: string
@@ -203,7 +205,7 @@ export default class AuthService {
       email: adminData.email,
       password: adminData.password,
       roleName: 'admin',
-      phone: adminData.phone
+      phone: adminData.phone,
     })
   }
 }

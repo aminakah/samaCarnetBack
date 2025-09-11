@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
-import PersonnelSubcategory from './personnel_subcategory.js'
 import TypePersonnel from './type_personnel.js'
 
 /**
@@ -39,8 +38,8 @@ export default class PersonnelCategory extends BaseModel {
   declare updatedAt: DateTime
 
   // Relationships
-  @hasMany(() => PersonnelSubcategory)
-  declare subcategories: HasMany<typeof PersonnelSubcategory>
+  @hasMany(() => PersonnelCategory)
+  declare subcategories: HasMany<typeof PersonnelCategory>
 
   @hasMany(() => TypePersonnel)
   declare typePersonnels: HasMany<typeof TypePersonnel>
@@ -49,7 +48,7 @@ export default class PersonnelCategory extends BaseModel {
    * Get active subcategories
    */
   async getActiveSubcategories() {
-    return await PersonnelSubcategory.query()
+    return await PersonnelCategory.query()
       .where('category_id', this.id)
       .where('is_active', true)
       .orderBy('sort_order')
